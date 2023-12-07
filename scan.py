@@ -5,6 +5,9 @@ import os
 stopfile_set = {'.github', '.git', '.githooks', '.idea', 'src', 'classes', 'test', 'resources', 'logs', 'css', 'LICENSE', 'pom.xml'}
 # 忽略对这些目录的遍历
 ignore_set = {'zm-code', 'shareOI', 'weibo-export-test', 'weibo-export'}
+# 忽略的文件
+ignore_files = {'.DS_Store'}
+
 
 def main(args):
     depth = args.d
@@ -13,9 +16,9 @@ def main(args):
         print('参数错误')
         return
     # 遍历
-    traverse(filepath, depth, '', filepath)
+    traverse(filepath, depth, '', filepath, args.include_files)
 
-def traverse(path, depth, indentation, base_path):
+def traverse(path, depth, indentation, base_path, include_files):
     if depth == 0:
         return ''
 
@@ -44,9 +47,13 @@ def traverse(path, depth, indentation, base_path):
 
         file_path = os.path.join(path, file)
         if os.path.isdir(file_path):
-            name = traverse(file_path, depth - 1, indentation + '|----', base_path)
+            name = traverse(file_path, depth - 1, indentation + '|----', base_path, include_files)
             if name == '':
                 print(indentation+file_path.replace(base_path, ''))
+        if include_files and os.path.isfile(file_path):
+            if file in ignore_files:
+                continue
+            print(indentation + file_path.replace(base_path, ''))
     return ''
 
 def getname_by_readme(readme_file):
@@ -95,7 +102,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', type=int, default='3', help='扫描深度，默认为3')
     parser.add_argument('-f', type=str, default='', help='扫描路径')
-    # parser.add_argument('-f', action='store_true', help='无追加参数')
+    parser.add_argument('--include_files', action='store_true', default=False, help='包括一般文件')
     args = parser.parse_args()
 
     main(args)
