@@ -12,3 +12,5 @@ python3 scan.py -f '/Users/evalcony/coding' -d 4 > result.txt
 
 - `-d` 表示扫描深度，默认为3。
 - `-f` 表示扫描路径。
+- `--include_files` 也对文件进行扫描。
+- `--exclude_format` 排除扫描某些类型的文件，以`,`隔开，无空格。
