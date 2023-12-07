@@ -39,7 +39,7 @@ def traverse(path, depth, indentation):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', type=int, default='1', help='扫描深度，默认为1')
+    parser.add_argument('-d', type=int, default='3', help='扫描深度，默认为3')
     parser.add_argument('-f', type=str, default='', help='扫描路径')
     # parser.add_argument('-f', action='store_true', help='无追加参数')
     args = parser.parse_args()
