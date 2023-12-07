@@ -15,10 +15,15 @@ def main(args):
     if filepath == '' or depth < 0:
         print('参数错误')
         return
+    exclude = args.exclude_format
+    exclude_format_set = set()
+    if exclude != '':
+        arr = exclude.split(',')
+        exclude_format_set = set(arr)
     # 遍历
-    traverse(filepath, depth, '', filepath, args.include_files)
+    traverse(filepath, depth, '', filepath, args.include_files, exclude_format_set)
 
-def traverse(path, depth, indentation, base_path, include_files):
+def traverse(path, depth, indentation, base_path, include_files, exclude_format):
     if depth == 0:
         return ''
 
@@ -47,11 +52,13 @@ def traverse(path, depth, indentation, base_path, include_files):
 
         file_path = os.path.join(path, file)
         if os.path.isdir(file_path):
-            name = traverse(file_path, depth - 1, indentation + '|----', base_path, include_files)
+            name = traverse(file_path, depth - 1, indentation + '|----', base_path, include_files, exclude_format)
             if name == '':
                 print(indentation+file_path.replace(base_path, ''))
         if include_files and os.path.isfile(file_path):
             if file in ignore_files:
+                continue
+            if file.split('.')[-1] in exclude_format:
                 continue
             print(indentation + file_path.replace(base_path, ''))
     return ''
@@ -103,6 +110,7 @@ if __name__ == '__main__':
     parser.add_argument('-d', type=int, default='3', help='扫描深度，默认为3')
     parser.add_argument('-f', type=str, default='', help='扫描路径')
     parser.add_argument('--include_files', action='store_true', default=False, help='包括一般文件')
+    parser.add_argument('--exclude_format', type=str, default='', help='不扫描的文件类型，以,隔开')
     args = parser.parse_args()
 
     main(args)
